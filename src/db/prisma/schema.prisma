@@ -1,0 +1,62 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  USER
+}
+
+enum TransactionEnum {
+  INCOME 
+  EXPENSE
+}
+
+model User {
+  id       String    @id @default(auto()) @map("_id") @db.ObjectId
+  email  String  @unique 
+  name      String
+  password  String
+  role    Role      @default(USER)
+  wallet Wallet[]
+  transactions Transaction[]
+
+  @@map("users")
+}
+
+model Wallet {
+  id      String    @id @default(auto()) @map("_id") @db.ObjectId
+  balance Float     @default(0)
+  name    String    @unique
+  ownerId String    @map("owner_id") @db.ObjectId
+
+  owner   User      @relation(fields: [ownerId], references: [id])
+  transactions Transaction[]
+
+  @@map("wallets")
+}
+
+model Transaction {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  walletId  String    @map("wallet_id") @db.ObjectId
+  userId    String    @map("user_id") @db.ObjectId
+  amount    Float
+  date      DateTime
+  type      TransactionEnum
+  category  String    
+  note      String?
+
+  wallet    Wallet    @relation(fields: [walletId], references: [id])
+  user      User      @relation(fields: [userId], references: [id])
+
+  @@map("transactions")
+}
+
