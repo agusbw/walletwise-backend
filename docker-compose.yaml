@@ -3,16 +3,8 @@ services:
   web:
     container_name: dev-walletwise-web
     build: .
-    develop:
-      watch:
-        - path: ./package.json
-          action: rebuild
-        - path: ./pnpm-lock.yaml
-          action: rebuild
-        - path: ./
-          target: /usr/app
-          action: sync
-          ignore: ["node_modules/"]
+    volumes:
+      - .:/usr/app
     ports:
       - "3000:3000"
     depends_on:
