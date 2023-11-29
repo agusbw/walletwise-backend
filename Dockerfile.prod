@@ -1,4 +1,4 @@
-# Dockerfile for local development because why not
+# Dockerfile for deployment
 
 FROM node:18
 
@@ -10,7 +10,9 @@ RUN npm install -g pnpm
 
 RUN pnpm install
 
+RUN pnpm build
+
 EXPOSE 3000
 
-CMD ["pnpm", "run", "dev"]
+CMD ["pnpm", "start"]
 
